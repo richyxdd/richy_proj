@@ -23,9 +23,51 @@
 
   <main>
     <section class="hero">
-      <h2>Transform Your Fitness Journey</h2>
+      <h2>Craft Your Fitness Journey</h2>
       <p>Explore workout plans, supplements, and more.</p>
     </section>
+
+     <!-- ======= Hero Video Section ======= -->
+     <section class="hero-video-container">
+        <video
+          id="heroVideo" 
+          src="images/edit.MOV"  
+          autoplay                      
+          muted             
+          playsinline       
+          poster="images/hero-video-poster.jpg" 
+        >
+          Your browser does not support the video tag. 
+        </video>
+      </section>
+      <!-- ======= End Hero Video Section ======= -->
+
+     <!-- ======= About Section ======= -->
+  <section class="about-me" style="background-color: #1E1E1E; padding: 40px 20px; margin-bottom: 40px; border-radius: 5px; text-align: center;">
+    <div style="max-width: 700px; margin: 0 auto;"> <!-- Container for centering -->
+      <h2>Meet hejixd</h2>
+      <!-- Optional: Add an image of yourself -->
+
+
+      <p style="margin-bottom: 15px;">
+        Hey! I'm hejixd. My fitness journey started back in high school, 
+        juggling football and track. This meant exploring everything from pure athletic conditioning 
+        to more traditional bodybuilding styles.
+      </p>
+      <p style="margin-bottom: 15px;">
+        I was always searching for the 'best' way to train. 
+        the biggest lesson I learned is this: the most effective training is the one tailored to 
+        <strong>your specific goals</strong> - whether that's peak athletic performance, 
+        building an aesthetic physique, or finding that powerful hybrid sweet spot.
+      </p>
+      <p>
+        For now since most of my content is geared towards bodybuilding,
+        I want to help you build a physique that you can be proud of. Check it, 
+        if you want tips for more hybrid stuff DM me I can help you with that too.
+      </p>
+    </div>
+  </section>
+  <!-- ======= End About Section ======= -->
 
     <section class="products">
         <h2>Products</h2>
@@ -52,7 +94,7 @@
 
           
           <div class="product-item">
-            <img src="images/htlt.png" alt="HTLT Supplement" />
+            <img src="images/stim.png" alt="HTLT Supplement" />
             <h3>HTLT Pre-Workout</h3>
             <p>Use code <strong>HEJI</strong> for 10% off</p>
             <a href="https://www.htltsupps.com" target="_blank" class="btn">Shop HTLT</a>
@@ -64,15 +106,32 @@
       
 
       <section class="contact">
-        <h2>DM for 1:1 Coaching</h2>
+        <h2>DM for 1:1 Coaching or Custom Plans</h2>
         <p>Tiktok <a href="https://www.tiktok.com/@hejixd" target="_blank">@hejixd</a> </br>Instagram <a href="https://www.instagram.com/hejixd" target="_blank">@hejixd</a></p>
       </section>
 
-      
+      <script>
+        // Wait for the HTML document to be fully loaded and parsed
+        document.addEventListener('DOMContentLoaded', () => {
+          // Get the video element using its CORRECT ID
+          const videoElement = document.getElementById('heroVideo'); // <-- Use the ID you added to the <video> tag
+          // Check if the video element was found
+          if (videoElement) {
+
+            // Add an event listener for the 'ended' event
+            videoElement.addEventListener('ended', () => {
+              // Add the CSS class to apply the grayscale filter
+              videoElement.classList.add('video-ended-grayscale');
+            });
+
+          }
+        });
+      </script>
   </main>
 
   <footer>
     <p>&copy; 2025 hejixd Fitness. All rights reserved.</p>
+    
   </footer>
 </body>
 </html>

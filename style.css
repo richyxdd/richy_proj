@@ -42,10 +42,64 @@
     font-weight: bold;
   }
   
-  /* Hero section */
-  .hero {
+/* ======= Hero Section Adjustment ======= */
+.hero {
     text-align: center;
-    margin-bottom: 40px;
+
+    padding-bottom: 20px; /* Add padding if text needs space above video */
+  }
+  
+  /* ======= Hero Video Styles (Revised) ======= */
+  .hero-video-container {
+    width: 100%;                /* Occupy full available width */
+    aspect-ratio: 16 / 7;       /* Define shape: Wider than tall. ADJUST AS NEEDED */
+    /* Or use height/max-height: */
+    /* height: 400px;        /* Example fixed height */
+    /* max-height: 60vh; */    /* Example viewport height limit */
+  
+    overflow: hidden;           /* MUST HAVE: Clips everything outside */
+    position: relative;         /* Needed for absolute positioning of the video */
+    background-color: #121212; /* Match body background for seamless blend */
+    line-height: 0;
+  }
+  
+  .hero-video-container video {
+    display: block;
+  
+    /* --- Positioning & Centering --- */
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    min-width: 100%; /* Ensure it covers container width *before* rotation */
+    min-height: 100%;/* Ensure it covers container height *before* rotation */
+  
+    /* --- Rotation, Scaling, Centering Transform --- */
+    /* if the clipped area needs more video content */
+    transform-origin: center center; /* Rotate around the center */
+    transform: translate(-50%, -50%) ; /* Center, Rotate, Scale */
+  
+    /* --- Masking / Clipping --- */
+    /* Define the visible rectangle. Adjust % values */
+    /* inset(top right bottom left) */
+    /* Example: Show middle 60% vertically, middle 80% horizontally */
+    clip-path: inset(20% 10% 20% 10%);
+  }
+
+  .video-ended-grayscale {
+    filter: grayscale(100%);
+    /* Optional: Add a smooth transition to the grayscale effect */
+    transition: filter 0.5s ease-in-out;
+  }
+  
+  /* ======= About Section Adjustment ======= */
+  .about-me {
+    /* Style moved from inline to CSS for clarity */
+    background-color: #1E1E1E;
+    padding: 40px 20px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 40px; /* Creates space AFTER the video */
+    /* margin-bottom remains 40px by default or adjust as needed */
   }
   
   .hero h2 {
@@ -188,6 +242,13 @@
         width: 90%; /* Make product items wider on mobile */
         max-width: 350px; /* But not too wide */
     }
+    .product-item img{
+        /* adjust size of image on mobile so that it shows the full image no cut offs */
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        display: block;
+    }
   
     .hero h2 {
         font-size: 28px; /* Adjust hero heading size */
@@ -196,4 +257,24 @@
     .hero p {
         font-size: 16px; /* Adjust hero text size */
     }
+    .hero-video-container {
+         aspect-ratio: 4 / 3; /* Make it less wide, more square-ish */
+      }
+    
+      .hero-video-container video {
+        /* --- Adjust Transform & Clipping for Mobile --- */
+    
+        /* Re-calculate scale based on the new container shape */
+        /* Often needs LESS scaling on mobile if container is relatively taller */
+        /* Start by slightly reducing the desktop scale and test */
+        transform: translate(-50%, -50%) ; /* ADJUST 1.2 */
+    
+        /* Adjust clip-path percentages for the mobile container shape */
+        /* Example: Clip LESS top/bottom, MORE left/right for a taller feel */
+        clip-path: inset(15% 25% 15% 25%); /* ADJUST percentages */
+      }
   }
+
+  /* ======= Hero Video Styles ======= */
+
+  
