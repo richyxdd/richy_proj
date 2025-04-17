@@ -7,9 +7,10 @@
   <meta name="keywords" content="fitness, hejixd, workout plans, supplements, HTLT, pre-workout, training">
   <meta name="author" content="hejixd">
   <title>hejixd Fitness</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  
   <header>
     <nav>
     <h1><a href="index.html">hejixd</a></h1>
@@ -22,6 +23,9 @@
   </header>
 
   <main>
+    <button id="login-btn">Login with Google</button>
+    <button id="logout-btn" style="display:none;">Logout</button>
+
     <section class="hero">
       <h2>Craft Your Fitness Journey</h2>
       <p>Explore workout plans, supplements, and more.</p>
@@ -73,25 +77,13 @@
         <h2>Products</h2>
         <div class="product-list">
             <div class="product-item">
-                <img src="images/side_chest.PNG" alt="Hejixd Workout Plan PDF" />
+                <img src="images/side_chest.jpg" alt="Hejixd Workout Plan PDF" />
                 <h3>Workout Plan PDF</h3>
                 <p>$19.99</p>
-                <!-- START OF PAYPAL FORM -->
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <!-- Hidden fields carry the purchase information -->
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="GVFZPDLQMD4EC" />
-                    <input type="hidden" name="currency_code" value="USD" />
-              
-                    <!-- *** THIS IS THE NEW BUTTON *** -->
-                    <button type="submit" name="submit" class="btn" title="Proceed to PayPal checkout">
-                        Get Your Plan
-                    </button>
-                    <!-- *** END OF NEW BUTTON *** -->
-                </form>
-                <!-- END OF PAYPAL FORM -->
-              </div>
-
+                <script src="https://gumroad.com/js/gumroad.js"></script>
+                <a class="btn" href="https://malloyrichard.gumroad.com/l/tgsxy" 
+                data-gumroad-overlay-checkout="true">Buy on</a>
+            </div>
           
           <div class="product-item">
             <img src="images/stim.png" alt="HTLT Supplement" />
@@ -110,23 +102,102 @@
         <p>Tiktok <a href="https://www.tiktok.com/@hejixd" target="_blank">@hejixd</a> </br>Instagram <a href="https://www.instagram.com/hejixd" target="_blank">@hejixd</a></p>
       </section>
 
-      <script>
-        // Wait for the HTML document to be fully loaded and parsed
-        document.addEventListener('DOMContentLoaded', () => {
-          // Get the video element using its CORRECT ID
-          const videoElement = document.getElementById('heroVideo'); // <-- Use the ID you added to the <video> tag
-          // Check if the video element was found
-          if (videoElement) {
-
-            // Add an event listener for the 'ended' event
-            videoElement.addEventListener('ended', () => {
-              // Add the CSS class to apply the grayscale filter
-              videoElement.classList.add('video-ended-grayscale');
-            });
-
-          }
-        });
-      </script>
+            <script>
+              // Wait for the HTML document to be fully loaded
+              document.addEventListener('DOMContentLoaded', () => {
+      
+                // --- Video Grayscale Logic ---
+                const videoElement = document.getElementById('heroVideo');
+                if (videoElement) {
+                  videoElement.addEventListener('ended', () => {
+                    videoElement.classList.add('video-ended-grayscale');
+                  });
+                } else {
+                  console.warn('Video element with ID "heroVideo" not found.');
+                }
+      
+                // --- Supabase Auth Logic ---
+      
+                // Check if supabaseClient was initialized correctly
+                if (typeof supabaseClient === 'undefined') {
+                    console.error("Supabase client (supabaseClient) is not defined. Check initialization.");
+                    return; // Stop if Supabase isn't ready
+                }
+      
+                // Get button elements using CORRECT IDs
+                const loginBtn = document.getElementById('login-btn');
+                const logoutBtn = document.getElementById('logout-btn');
+      
+                // Check if buttons exist before adding listeners
+                if (!loginBtn || !logoutBtn) {
+                    console.error("Login or Logout button not found. Check HTML IDs.");
+                    return; // Stop if buttons aren't found
+                }
+      
+                // --- Event Handlers ---
+      
+                // Handle Login
+                loginBtn.addEventListener('click', async () => {
+                  console.log('Login button clicked'); // Debugging
+                  const { error } = await supabaseClient.auth.signInWithOAuth({
+                       provider: 'google',
+                       options: {
+                          // IMPORTANT: Add your redirect URL here if needed for deployment
+                          // redirectTo: window.location.origin // Example: redirects back to base URL
+                       }
+                  });
+                  if (error) {
+                      console.error('Login error:', error.message);
+                      alert(`Login failed: ${error.message}`); // Show error to user
+                  }
+                });
+      
+                // Handle Logout
+                logoutBtn.addEventListener('click', async () => {
+                  console.log('Logout button clicked'); // Debugging
+                  const { error } = await supabaseClient.auth.signOut();
+                  if (error) {
+                      console.error('Logout error:', error.message);
+                       alert(`Logout failed: ${error.message}`); // Show error to user
+                  } else {
+                      // Optionally clear user state or redirect
+                      // Refreshing might be enough if session check runs on load
+                      console.log('Logout successful, reloading...');
+                      window.location.reload(); // Reload to update UI based on session state
+                  }
+                });
+      
+      
+                // --- Initial UI setup based on Session ---
+      
+                // Function to update button visibility
+                const updateAuthButtons = (session) => {
+                    if (session) {
+                        console.log('User is logged in:', session.user.email);
+                        loginBtn.style.display = 'none';
+                        logoutBtn.style.display = 'block';
+                    } else {
+                        console.log('User is logged out.');
+                        loginBtn.style.display = 'block';
+                        logoutBtn.style.display = 'none';
+                    }
+                };
+      
+                // Check initial session state
+                supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                    updateAuthButtons(session);
+                }).catch(error => {
+                    console.error("Error getting initial session:", error);
+                });
+      
+                // Listen for changes in authentication state (e.g., after redirect)
+                supabaseClient.auth.onAuthStateChange((_event, session) => {
+                    console.log('Auth state changed:', _event, session);
+                    updateAuthButtons(session);
+                });
+      
+              }); // End of DOMContentLoaded
+            </script>
   </main>
 
   <footer>
