@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Configuration ---
     const SUPABASE_URL = 'https://sohdgfnsxybzwippgxzs.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvaGRnZm5zeHliendpcHBneHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDgzMTEsImV4cCI6MjA2MDQ4NDMxMX0.eObVuzOdSeL3QlR2f2EVZXp4NcgOBoDwwgFpSwLyTdw'; // Your Anon Key
+    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;  // Your Anon Key
     const GOOGLE_CLIENT_ID = "986166698260-0p28qdf9kfmaa1b3kj6p93bcpvrd5s2k.apps.googleusercontent.com"; // Your Google Client ID
 
     // --- State Variables ---
