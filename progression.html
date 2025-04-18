@@ -125,8 +125,9 @@
               // Fetch data ordered by date
               // Assumes RLS policy handles user filtering based on logged-in user
               const { data: logs, error } = await supabaseClient
-                  .from('squat_logs')
+                  .from('workout_logs') // Use the correct table name
                   .select('workout_date, weight, reps')
+                  .eq('exercise_name', 'Squat') // Filter for Squat logs
                   .order('workout_date', { ascending: true });
 
               if (error) {
