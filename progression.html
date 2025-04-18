@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="hejixd Fitness - Squat Progression Journey.">
+  <meta name="keywords" content="fitness, hejixd, workout, squat, progression, strength, chart, graph, estimated 1rm">
+  <meta name="author" content="hejixd">
+  <title>Squat Progression - hejixd Fitness</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .chart-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 5px;
+      min-height: 300px; /* Ensure container has height while loading */
+      position: relative; /* For loading indicator */
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    /* Basic Loading Indicator */
+    .loading-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #FAFAFA;
+        font-size: 1.2em;
+        display: none; /* Hidden by default */
+    }
+    .loading-indicator.visible {
+        display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Supabase Client JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Initialize Supabase Client (should be accessible globally or passed)
+    let supabaseClient;
+    try {
+        if (typeof supabase !== 'undefined' && typeof supabase.createClient !== 'undefined') {
+            const { createClient } = supabase;
+            supabaseClient = createClient(
+                'https://sohdgfnsxybzwippgxzs.supabase.co', // Your Supabase URL
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvaGRnZm5zeHliendpcHBneHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MDgzMTEsImV4cCI6MjA2MDQ4NDMxMX0.eObVuzOdSeL3QlR2f2EVZXp4NcgOBoDwwgFpSwLyTdw' // Your Supabase Anon Key
+            );
+            console.log('Supabase Client Initialized on progression page.');
+        } else {
+            throw new Error('Supabase global object not found.');
+        }
+    } catch (error) {
+        console.error("Failed to initialize Supabase client:", error);
+        // Display error to user if needed
+    }
+  </script>
+
+  <header>
+    <nav>
+      <h1><a href="index.html">hejixd</a></h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="progression.html">Progression</a></li>
+        <li><a href="https://www.tiktok.com/@hejixd" target="_blank">TikTok</a></li>
+        <li><a href="https://www.instagram.com/hejixd" target="_blank">Instagram</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Squat Journey (Estimated Strength)</h2>
+
+    <div class="chart-container">
+      <canvas id="squatChart"></canvas>
+      <div id="loading" class="loading-indicator">Loading Chart Data...</div>
+      <div id="error-message" class="loading-indicator" style="color: #E57373;"></div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>© 2025 hejixd Fitness. All rights reserved.</p>
+  </footer>
+
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Your custom script to create the chart -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('squatChart');
+      const loadingIndicator = document.getElementById('loading');
+      const errorMessageElement = document.getElementById('error-message');
+      let squatChartInstance = null; // To hold the chart instance
+
+      // --- 1 Rep Max Estimation Function (Epley Formula) ---
+      function calculateEpley1RM(weight, reps) {
+        if (reps === 1) return weight; // If 1 rep, 1RM is the weight itself
+        if (reps < 1 || weight <= 0) return 0; // Invalid input
+        return Math.round(weight * (1 + reps / 30.0)); // Calculate and round
+      }
+
+      // --- Function to Fetch Data and Draw Chart ---
+      async function fetchAndDrawChart() {
+          if (!supabaseClient) {
+              errorMessageElement.textContent = "Error: Supabase client not available.";
+              errorMessageElement.classList.add('visible');
+              return;
+          }
+          if (!ctx) {
+               errorMessageElement.textContent = "Error: Chart canvas not found.";
+               errorMessageElement.classList.add('visible');
+               return;
+          }
+
+          loadingIndicator.classList.add('visible'); // Show loading
+          errorMessageElement.classList.remove('visible'); // Hide error
+
+          try {
+              // Fetch data ordered by date
+              // Assumes RLS policy handles user filtering based on logged-in user
+              const { data: logs, error } = await supabaseClient
+                  .from('squat_logs')
+                  .select('workout_date, weight, reps')
+                  .order('workout_date', { ascending: true });
+
+              if (error) {
+                  throw new Error(`Supabase error: ${error.message}`); // Throw error to catch block
+              }
+
+              if (!logs || logs.length === 0) {
+                  errorMessageElement.textContent = "No squat data found.";
+                  errorMessageElement.classList.add('visible');
+                  loadingIndicator.classList.remove('visible');
+                  return; // Exit if no data
+              }
+
+              console.log("Fetched logs:", logs); // Debugging
+
+              // Process data
+              const labels = logs.map(log => {
+                  // Format date nicely (e.g., 'Apr 30, 2024')
+                  const date = new Date(log.workout_date + 'T00:00:00'); // Ensure correct date parsing
+                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'});
+              });
+              const calculatedStrengthData = logs.map(log => calculateEpley1RM(log.weight, log.reps));
+
+              console.log("Processed Labels:", labels);
+              console.log("Processed Data:", calculatedStrengthData);
+
+              // --- Draw Chart ---
+               // Destroy previous chart instance if it exists
+              if (squatChartInstance) {
+                  squatChartInstance.destroy();
+              }
+
+              squatChartInstance = new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                      labels: labels,
+                      datasets: [{
+                          label: 'Estimated 1RM Squat (lbs)', // Updated label
+                          data: calculatedStrengthData,
+                          fill: false,
+                          borderColor: '#1E88E5',
+                          tension: 0.1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      scales: {
+                          y: {
+                              beginAtZero: false,
+                              title: { display: true, text: 'Estimated 1RM (lbs)', color: '#FAFAFA' },
+                              ticks: { color: '#FAFAFA' }
+                          },
+                          x: {
+                              title: { display: true, text: 'Workout Date', color: '#FAFAFA' },
+                              ticks: { color: '#FAFAFA' }
+                          }
+                      },
+                      plugins: {
+                          legend: { labels: { color: '#FAFAFA' } },
+                          tooltip: { titleColor: '#FAFAFA', bodyColor: '#FAFAFA' }
+                      }
+                  }
+              });
+
+          } catch (error) {
+              console.error("Error fetching or drawing chart:", error);
+              errorMessageElement.textContent = `Error: ${error.message}`;
+              errorMessageElement.classList.add('visible');
+          } finally {
+              loadingIndicator.classList.remove('visible'); // Hide loading
+          }
+      }
+
+      // --- Initial Call ---
+      fetchAndDrawChart();
+
+    }); // End DOMContentLoaded
+  </script>
+
+</body>
+</html>
