@@ -6,10 +6,13 @@
   <meta name="description" content="hejixd Fitness - Transform your fitness journey with expert workout plans and top-quality supplements.">
   <meta name="keywords" content="fitness, hejixd, workout plans, supplements, HTLT, pre-workout, training">
   <meta name="author" content="hejixd">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <title>hejixd Fitness</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  
   <header>
     <nav>
     <h1><a href="index.html">hejixd</a></h1>
@@ -17,11 +20,23 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="https://www.tiktok.com/@hejixd" target="_blank">TikTok</a></li>
         <li><a href="https://www.instagram.com/hejixd" target="_blank">Instagram</a></li>
+        <li><a href="progression.html" >Progress</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
+    
+    <script src="https://accounts.google.com/gsi/client" async></script>
+
+      <!-- Somewhere in your body, e.g., near the top or in the header -->
+  <div id="auth-container"> <!-- Wrapper for styling/layout -->
+    <!-- YOUR Custom Login Button -->
+    <button id="googleLoginBtn" class="btn">Login with Google</button>
+    <!-- Logout Button (remains the same) -->
+    <button id="logoutButton" class="btn" style="display: none;">Logout</button>
+  </div>
+
     <section class="hero">
       <h2>Craft Your Fitness Journey</h2>
       <p>Explore workout plans, supplements, and more.</p>
@@ -35,7 +50,6 @@
           autoplay                      
           muted             
           playsinline       
-          poster="images/hero-video-poster.jpg" 
         >
           Your browser does not support the video tag. 
         </video>
@@ -73,25 +87,13 @@
         <h2>Products</h2>
         <div class="product-list">
             <div class="product-item">
-                <img src="images/side_chest.PNG" alt="Hejixd Workout Plan PDF" />
+                <img src="images/side_chest.jpg" alt="Hejixd Workout Plan PDF" />
                 <h3>Workout Plan PDF</h3>
                 <p>$19.99</p>
-                <!-- START OF PAYPAL FORM -->
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <!-- Hidden fields carry the purchase information -->
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="GVFZPDLQMD4EC" />
-                    <input type="hidden" name="currency_code" value="USD" />
-              
-                    <!-- *** THIS IS THE NEW BUTTON *** -->
-                    <button type="submit" name="submit" class="btn" title="Proceed to PayPal checkout">
-                        Get Your Plan
-                    </button>
-                    <!-- *** END OF NEW BUTTON *** -->
-                </form>
-                <!-- END OF PAYPAL FORM -->
-              </div>
-
+                <script src="https://gumroad.com/js/gumroad.js"></script>
+                <a class="btn" href="https://malloyrichard.gumroad.com/l/tgsxy" 
+                data-gumroad-overlay-checkout="true">Buy on</a>
+            </div>
           
           <div class="product-item">
             <img src="images/stim.png" alt="HTLT Supplement" />
@@ -102,14 +104,12 @@
         </div>
       </section>
 
-
-      
-
       <section class="contact">
         <h2>DM for 1:1 Coaching or Custom Plans</h2>
         <p>Tiktok <a href="https://www.tiktok.com/@hejixd" target="_blank">@hejixd</a> </br>Instagram <a href="https://www.instagram.com/hejixd" target="_blank">@hejixd</a></p>
       </section>
 
+      <script src="auth.js" defer></script>
       <script>
         // Wait for the HTML document to be fully loaded and parsed
         document.addEventListener('DOMContentLoaded', () => {
@@ -123,12 +123,11 @@
               // Add the CSS class to apply the grayscale filter
               videoElement.classList.add('video-ended-grayscale');
             });
-
           }
         });
+        
       </script>
   </main>
-
   <footer>
     <p>&copy; 2025 hejixd Fitness. All rights reserved.</p>
     
