@@ -2,9 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Configuration ---
-    const SUPABASE_URL = 'https://sohdgfnsxybzwippgxzs.supabase.co';
-    const SUPABASE_ANON_KEY =  import.meta.env.VITE_SUPABASE_ANON_KEY;// Your Anon Key
-    const GOOGLE_CLIENT_ID = "986166698260-0p28qdf9kfmaa1b3kj6p93bcpvrd5s2k.apps.googleusercontent.com"; // Your Google Client ID
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+    const SUPABASE_ANON_KEY =  import.meta.env.VITE_SUPABASE_ANON_KEY;//  Anon Key
+    const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_I //Google Client ID
 
     // --- State Variables ---
     let supabaseClient;
